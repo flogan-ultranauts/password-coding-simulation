@@ -1,55 +1,47 @@
-import React,{useState} from 'react'
-// import {TabList,TabPanel,Tabs,Tab} from 'react-tabs'
-
+import React, { useState, useEffect } from 'react';
 
 export default function Admin() {
-    const [adminPassword,setAdminPassword]= useState('')
-    const [adminError,setAdminError]= useState('')
-    const [adminAccept,setAdminAccept]=useState('')
+  const [AdminPassword, setAdminPassword] = useState('');
+  const [error, setError] = useState('');
+  const [accept, setAccept] = useState('');
 
+  let letterCount = (AdminPassword.match(/[A-Za-z]+/g) ?? []).length;
+  let numberCount = (AdminPassword.match(/[0-9]+/g) ?? []).length;
+  let specialChar = (AdminPassword.match(/[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/g) ?? []).length;
 
-    function handleAdmin(e) {
-        setAdminPassword(e.target.value);
-
-       let symbolCount = (adminPassword.match(/\W/) ?? []).length;
-
-        if(adminPassword.length < 13 || symbolCount < 1){
-            setAdminError("password is accepted")
-        } else if(adminPassword.length >=13 && symbolCount >0){
-            setAdminError(null)
-            setAdminAccept("Admin password accepted")
-        }
-        
+  useEffect(() => {
+    if (AdminPassword.length === 0) {
+      setError(null);
+      setAccept(null);
+    } else if (letterCount < 1 && AdminPassword.length < 8) {
+      setError('Password is not accepted');
+      setAccept(null);
+    } else if (AdminPassword.length < 8 && numberCount < 1) {
+      setError('password is not accepted');
+      setAccept(null);
+    } else if (AdminPassword.length >= 8 && letterCount > 0 && numberCount > 0 && specialChar > 3) {
+      setAccept('password is accepted');
+      setError(null);
     }
-    return (
-        <div>
-          
-          
-       
-         
-          <h2 className="underline text-blue-600 font-normal text-lg mt-7">for admin </h2>
-          <div>
-            <input
-              type="text"
-              name="userpassword"
-              value={adminPassword}
-              onChange={handleAdmin}
-              className="px-3 py-2 mt-10 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-blue-500 block w-full rounded-md sm:text-sm focus:ring-1"
-              placeholder="Enter user password"
-            />
-            <div>{adminPassword}</div>
-            <div id="output" className="text-red-500 text-lg font-medium">
-              {adminError}
-            </div>
-            <div className="text-green-500 text-lg font-medium">{adminAccept} </div>
-            
-          </div>
-     
-    
-          
-         
-     
-   
-        </div>
-    )
+  }, [AdminPassword, specialChar, letterCount, numberCount]);
+  return (
+    <div className="py-8 max-w-sm">
+      <h1 className="text-xl font-semibold text-slate-700">admin password</h1>
+      <input
+        id="admin-password"
+        className='mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1" placeholder="you@example.com'
+        placeholder="enter password"
+        onChange={(e) => {
+          setAdminPassword(e.target.value);
+        }}
+      />
+      <p>{AdminPassword.length}</p>
+      <p id="admin-error" className="text-red-600 font-semibold text-sm">
+        {error}
+      </p>
+      <p id="admin-accept" className="text-green-600 font-semibold text-sm">
+        {accept}
+      </p>
+    </div>
+  );
 }
